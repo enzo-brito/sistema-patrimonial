@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>Gestão de Bens</title>
+	<style>
+.container {
+	max-width: 1000px;
+	margin: 0 auto;
+	padding: 20px;
+}
+
+.header-actions {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.titulo {
+	font-size: 24px;
+	font-weight: bold;
+}
+</style>
+</h:head>
+<h:body>
+	<div class="container">
+
+		<h:form id="formBem">
+
+			<p:growl id="growl" showDetail="true" life="3000" />
+
+			<div class="header-actions">
+				<span class="titulo">Cadastro de Bens</span>
+
+				<p:button value="Cadastro de Tipos Produtos"
+					icon="pi pi-arrow-right" outcome="/pages/tipo-produto.xhtml"
+					styleClass="p-button-info" />
+
+				<p:commandButton value="Novo Bem" icon="pi pi-plus"
+					styleClass="p-button-success"
+					onclick="PF('dialogCadastro').show();" update="dialogForm"
+					process="@this" />
+
+			</div>
+
+			<p:inputText id="filtroNome" value="#{bemBean.filtroNome}"
+				placeholder="Filtrar por nome..."
+				style="width:100%; margin-bottom:10px;">
+				<p:ajax event="keyup" update="tabelaBens"
+					listener="#{bemBean.filtrar}" />
+			</p:inputText>
+
+			<p:dataTable id="tabelaBens" value="#{bemBean.lista}" var="b"
+				paginator="true" rows="10" responsiveLayout="scroll"
+				emptyMessage="Nenhum bem encontrado." rowKey="#{b.id}"
+				selectionMode="single">
+
+				<p:column headerText="Nome" sortBy="#{b.nome}">
+					<h:outputText value="#{b.nome}"/>
+				</p:column>
+
+				<p:column headerText="Tipo" sortBy="#{b.tipoProduto.nome}">
+					<h:outputText value="#{b.tipoProduto.nome}"/>
+				</p:column>
+
+				<p:column headerText="Preço">
+					<h:outputText value="#{b.precoCompra}">
+						<f:convertNumber type="currency" currencySymbol="R$"
+							locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Data">
+					<h:outputText value="#{b.dataCompra}">
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+
+				<p:column headerText="Vida Útil">
+					<h:outputText value="#{b.vidaUtil}"/>
+				</p:column>
+
+				<p:column headerText="Valor Residual">
+					<h:outputText value="#{b.valorResidual}"/>
+				</p:column>
+
+				<p:column headerText="Depreciação Anual">
+					<h:outputText value="#{bemBean.depreciacaoAnual(b)}"/>
+				</p:column>
+
+				<p:column headerText="Ações" style="width:100px;" exportable="false">
+					<p:commandButton value="Editar" icon="pi pi-pencil"
+						action="#{bemBean.editar(b)}" update="formBem:dialogForm"
+						oncomplete="PF('dialogCadastro').show();"
+						styleClass="p-button-text p-button-sm" immediate="true"
+						style="margin-bottom: 5px;" />
+
+					<p:commandButton value="Excluir" icon="pi pi-trash"
+						action="#{bemBean.excluir(b)}"
+						update="formBem:tabelaBens formBem:growl"
+						styleClass="p-button-text p-button-sm"
+						onclick="return confirm('Tem certeza que deseja excluir?');"
+						immediate="true" style="margin-bottom: 5px;" />
+
+
+				</p:column>
+			</p:dataTable>
+
+			<p:commandButton value="Exportar Excel" icon="pi pi-file-excel"
+				styleClass="p-button-secondary" style="margin-top:10px;"
+				ajax="false" immediate="true">
+				<p:dataExporter type="xls" target="tabelaBens" fileName="bens" />
+			</p:commandButton>
+
+			<p:commandButton value="Exportar PDF" icon="pi pi-file-pdf"
+				styleClass="p-button-danger"
+				style="margin-top:10px; margin-left:10px;" ajax="false"
+				immediate="true">
+				<p:dataExporter type="pdf" target="tabelaBens" fileName="bens" />
+			</p:commandButton>
+
+
+			<p:dialog header="Cadastro de Bem" widgetVar="dialogCadastro"
+				modal="true" closable="true" resizable="false" draggable="true">
+				<h:panelGroup id="dialogForm">
+					<p:panelGrid columns="2" columnClasses="label,value"
+						styleClass="ui-panelgrid-blank">
+
+						<p:outputLabel value="Nome:" for="nome" />
+						<p:inputText id="nome" value="#{bemBean.bem.nome}" required="true" />
+
+						<p:outputLabel value="Tipo de Produto:" for="tipo" />
+						<p:selectOneMenu id="tipo" value="#{bemBean.bem.tipoProduto}"
+							converter="tipoProdutoConverter">
+							<f:selectItems value="#{bemBean.tipos}" var="tipo"
+								itemValue="#{tipo}" itemLabel="#{tipo.nome}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="Preço de Compra:" for="preco" />
+						<p:inputText id="preco" value="#{bemBean.bem.precoCompra}"
+							required="true" />
+
+						<p:outputLabel value="Data de Compra:" for="dataCompra" />
+						<p:calendar id="dataCompra" value="#{bemBean.bem.dataCompra}"
+							pattern="dd/MM/yyyy" required="true" showIcon="true" />
+
+						<p:outputLabel value="Vida Útil (anos):" for="vidaUtil" />
+						<p:inputText id="vidaUtil" value="#{bemBean.bem.vidaUtil}"
+							required="true" />
+
+						<p:outputLabel value="Valor Residual:" for="valorResidual" />
+						<p:inputText id="valorResidual"
+							value="#{bemBean.bem.valorResidual}" />
+					</p:panelGrid>
+
+					<p:separator />
+
+					<p:commandButton value="Salvar" icon="pi pi-save"
+						action="#{bemBean.salvar}" update="tabelaBens growl"
+						oncomplete="PF('dialogCadastro').hide();"
+						styleClass="p-button-primary" />
+				</h:panelGroup>
+			</p:dialog>
+
+		</h:form>
+	</div>
+</h:body>
+</html>

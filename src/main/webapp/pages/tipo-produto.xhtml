@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>Gestão de Tipos de Produtos</title>
+	<style>
+.container {
+	max-width: 1000px;
+	margin: 0 auto;
+	padding: 20px;
+}
+
+.header-actions {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.titulo {
+	font-size: 24px;
+	font-weight: bold;
+}
+</style>
+</h:head>
+<h:body>
+
+	<div class="container">
+
+		<h:form id="formTipoProduto">
+
+			<p:growl id="growl" showDetail="true" life="3000" />
+
+			<div class="header-actions">
+				<span class="titulo">Tipos de Produtos</span>
+				<p:button value="Cadastro de Bens" icon="pi pi-arrow-left"
+					outcome="/pages/bem.xhtml" styleClass="p-button-info" />
+				<p:commandButton value="Novo Tipo" icon="pi pi-plus"
+					styleClass="p-button-success"
+					onclick="PF('dialogCadastro').show();" update="@form:dialogForm"
+					process="@this" />
+			</div>
+
+			<p:inputText id="filtroNome" value="#{tipoProdutoBean.filtroNome}"
+				placeholder="Filtrar por nome..."
+				style="width:100%; margin-bottom:10px;">
+				<p:ajax event="keyup" update="tabelaTipos"
+					listener="#{tipoProdutoBean.filtrar}" />
+			</p:inputText>
+
+			<p:dataTable id="tabelaTipos" value="#{tipoProdutoBean.lista}"
+				var="tp" paginator="true" rows="10" responsiveLayout="scroll"
+				emptyMessage="Nenhum tipo de produto encontrado." rowKey="#{tp.id}"
+				selectionMode="single">
+
+				<p:column headerText="Código" sortBy="#{tp.id}">
+					<h:outputText value="#{tp.id}" />
+				</p:column>
+
+				<p:column headerText="Nome" sortBy="#{tp.nome}"
+					filterMatchMode="contains">
+					<h:outputText value="#{tp.nome}" />
+				</p:column>
+
+				<p:column headerText="Ações" style="width: 150px;" exportable="false">
+					<p:commandButton value="Editar" icon="pi pi-pencil"
+						action="#{tipoProdutoBean.editar(tp)}" update="@form:dialogForm"
+						oncomplete="PF('dialogCadastro').show();"
+						styleClass="p-button-text p-button-sm" style="margin-bottom: 5px;" 
+						/>
+
+
+					<p:commandButton value="Excluir" icon="pi pi-trash"
+						action="#{tipoProdutoBean.excluir(tp)}"
+						update="@form:tabelaTipos @form:growl"
+						styleClass="p-button-text p-button-sm"
+						onclick="return confirm('Tem certeza que deseja excluir?');"
+						style="margin-bottom: 5px;" 
+						/>
+				</p:column>
+			</p:dataTable>
+
+			<p:commandButton value="Exportar Excel" icon="pi pi-file-excel"
+				styleClass="p-button-secondary" style="margin-top:10px;"
+				ajax="false">
+				<p:dataExporter type="xls" target="tabelaTipos"
+					fileName="tipos_produtos" />
+			</p:commandButton>
+
+			<p:commandButton value="Exportar PDF" icon="pi pi-file-pdf"
+				styleClass="p-button-danger"
+				style="margin-top:10px; margin-left:10px;" ajax="false">
+				<p:dataExporter type="pdf" target="tabelaTipos"
+					fileName="tipos_produtos" />
+			</p:commandButton>
+
+			<p:dialog header="Cadastro de Tipo de Produto"
+				widgetVar="dialogCadastro" modal="true" closable="true"
+				resizable="false" draggable="true" dynamic="true">
+
+				<h:panelGroup id="dialogForm">
+					<p:panelGrid columns="2" columnClasses="label,value"
+						styleClass="ui-panelgrid-blank">
+
+						<p:outputLabel value="Código:" for="codigo" />
+						<p:inputText id="codigo" value="#{tipoProdutoBean.tipoProduto.id}"
+							readonly="true" style="width:100px;" />
+
+						<p:outputLabel value="Nome:" for="nome" />
+						<p:inputText id="nome" value="#{tipoProdutoBean.tipoProduto.nome}"
+							required="true" style="width:300px;" />
+					</p:panelGrid>
+
+					<p:separator />
+
+					<p:commandButton value="Salvar" icon="pi pi-save"
+						action="#{tipoProdutoBean.salvar}"
+						update="@form:tabelaTipos @form:growl"
+						oncomplete="PF('dialogCadastro').hide();"
+						styleClass="p-button-primary" />
+				</h:panelGroup>
+
+			</p:dialog>
+
+		</h:form>
+
+	</div>
+
+</h:body>
+</html>
