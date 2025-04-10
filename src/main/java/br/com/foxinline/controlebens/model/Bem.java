@@ -41,12 +41,12 @@ public class Bem implements Serializable, Nomeavel {
     private Date dataCompra;
 
     @Column(name = "vida_util", nullable = false)
-    private Integer vidaUtil; // em anos
+    private Integer vidaUtil; 
 
     @Column(name = "valor_residual")
     private BigDecimal valorResidual;
 
-    // Getters e Setters
+    
     public Long getId() {
         return id;
     }
