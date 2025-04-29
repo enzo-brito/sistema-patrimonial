@@ -1,10 +1,18 @@
 
-# 📘 Controle de Bens
-
-Sistema de controle patrimonial com JSF, PrimeFaces, PostgreSQL e deploy no GlassFish. Realiza cadastro, listagem e cálculo de depreciação de bens com base na vida útil.
-
 ---
 
+# 📘 Controle de Bens
+
+[![Status](https://img.shields.io/badge/status-finalizado-green.svg)]()  
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)]()  
+[![Java](https://img.shields.io/badge/Java-8+-red.svg)]()  
+[![JSF](https://img.shields.io/badge/JSF-PrimeFaces-blueviolet.svg)]()  
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-12+-blue.svg)]()  
+[![GlassFish](https://img.shields.io/badge/GlassFish-5%2B-yellowgreen.svg)]()
+
+> **Controle de Bens** é um sistema de controle patrimonial utilizando **JSF**, **PrimeFaces** e **PostgreSQL**, com cálculos automáticos de depreciação e deploy no servidor **GlassFish**. O sistema permite o cadastro, listagem e cálculo de depreciação de bens com base na sua vida útil.
+
+---
 ## 📁 Estrutura do Projeto
 
 ```
@@ -26,7 +34,8 @@ controlebens/
 │   ├── resources/                     │   └── WEB-INF/
 │       ├── web.xml                    # Configuração JSF
 │       └── faces-config.xml          # Configuração adicional JSF
-└── pom.xml 
+└── pom.xml
+```
 
 ---
 
@@ -119,7 +128,8 @@ public class DepreciacaoService {
         BigDecimal diferenca = bem.getPrecoCompra().subtract(bem.getValorResidual());
         return diferenca.divide(BigDecimal.valueOf(bem.getVidaUtil()), 2, RoundingMode.HALF_UP);
     }
-}```
+}
+```
 
 ### Fórmula:
 
@@ -131,9 +141,30 @@ Depreciação Anual = (Preço de Compra - Valor Residual) / Vida Útil
 
 ## 🛠️ Tecnologias Usadas
 
-- Java 8
-- JSF 2.3
-- PrimeFaces 8
-- PostgreSQL
-- Hibernate / JPA
-- GlassFish 5
+- **Java 8**
+- **JSF 2.3**
+- **PrimeFaces 8**
+- **PostgreSQL**
+- **Hibernate / JPA**
+- **GlassFish 5**
+
+---
+
+## 🧑‍💻 Contribuições
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir *issues* ou enviar *pull requests*.
+
+---
+
+## 📜 Licença
+
+Distribuído sob a licença **MIT**.
+
+---
+
+## 📫 Contato
+
+- [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?logo=linkedin&style=for-the-badge)](https://www.linkedin.com/in/enzo-brito-b85471284)
+- [![Gmail](https://img.shields.io/badge/Email-Contact-red?logo=gmail&style=for-the-badge)](mailto:enzoj820@gmail.com)
+
+Feito com ❤️ e muito café!
